@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Explorer - Interactive Learning Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #00f5ff, #ff00f5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover {
+            color: #00f5ff;
+        }
+
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            background: radial-gradient(circle at center, rgba(0, 245, 255, 0.1) 0%, transparent 70%);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #00f5ff, #ff00f5, #ffff00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px rgba(0, 245, 255, 0.5)); }
+            to { filter: drop-shadow(0 0 30px rgba(255, 0, 245, 0.5)); }
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+
+        .section {
+            margin: 4rem 0;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .section h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #00f5ff;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .demo-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 245, 255, 0.3);
+            border-color: #00f5ff;
+        }
+
+        .demo-card h3 {
+            color: #ff00f5;
+            margin-bottom: 1rem;
+        }
+
+        .canvas-container {
+            width: 100%;
+            height: 300px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin: 1rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(45deg, #00f5ff, #0080ff);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            background: linear-gradient(45deg, #ff00f5, #ff0080);
+            transform: scale(1.05);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 200px;
+            height: 5px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            margin: 0 1rem;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00f5ff, #ff00f5);
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00f5ff, #ff00f5);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .neural-network {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 200px;
+            margin: 2rem 0;
+        }
+
+        .layer {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .neuron {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00f5ff, #0080ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .neuron:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.8);
+        }
+
+        .neuron.active {
+            background: linear-gradient(45deg, #ff00f5, #ff0080);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .connection {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, #00f5ff, #ff00f5);
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+
+        .connection.active {
+            opacity: 1;
+            box-shadow: 0 0 10px rgba(0, 245, 255, 0.8);
+        }
+
+        .data-point {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            position: absolute;
+            cursor: grab;
+            transition: all 0.3s ease;
+        }
+
+        .data-point:hover {
+            transform: scale(1.5);
+        }
+
+        .data-point.positive {
+            background: #00ff00;
+        }
+
+        .data-point.negative {
+            background: #ff0000;
+        }
+
+        .decision-boundary {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.5s ease;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00f5ff;
+        }
+
+        .stat-label {
+            opacity: 0.8;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 800px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #ff00f5;
+        }
+
+        .learning-path {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .path-step {
+            text-align: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .path-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .path-circle.completed {
+            background: linear-gradient(45deg, #00ff00, #00ff80);
+        }
+
+        .path-circle.current {
+            background: linear-gradient(45deg, #00f5ff, #ff00f5);
+            animation: pulse 2s infinite;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            border-bottom-color: #00f5ff;
+            color: #00f5ff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                justify-content: center;
+            }
+            
+            .slider {
+                width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">🤖 AI Explorer</div>
+            <ul class="nav-links">
+                <li><a onclick="scrollToSection('neural-networks')">Neural Networks</a></li>
+                <li><a onclick="scrollToSection('computer-vision')">Computer Vision</a></li>
+                <li><a onclick="scrollToSection('machine-learning')">Machine Learning</a></li>
+                <li><a onclick="scrollToSection('ai-ethics')">AI Ethics</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section class="hero">
+            <h1>AI Explorer</h1>
+            <p>Discover the fascinating world of Artificial Intelligence through interactive demos and visualizations</p>
+            <div class="learning-path">
+                <div class="path-step">
+                    <div class="path-circle completed">1</div>
+                    <div>Basics</div>
+                </div>
+                <div class="path-step">
+                    <div class="path-circle current">2</div>
+                    <div>Neural Networks</div>
+                </div>
+                <div class="path-step">
+                    <div class="path-circle">3</div>
+                    <div>Deep Learning</div>
+                </div>
+                <div class="path-step">
+                    <div class="path-circle">4</div>
+                    <div>Advanced AI</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="neural-networks" class="section">
+            <h2>🧠 Neural Networks</h2>
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('perceptron')">Perceptron</div>
+                <div class="tab" onclick="switchTab('multilayer')">Multi-layer</div>
+                <div class="tab" onclick="switchTab('activation')">Activation Functions</div>
+            </div>
+
+            <div id="perceptron" class="tab-content active">
+                <div class="demo-grid">
+                    <div class="demo-card">
+                        <h3>Interactive Perceptron</h3>
+                        <p>Click and drag to add data points. Watch how the perceptron learns to classify them!</p>
+                        <div class="canvas-container">
+                            <canvas id="perceptronCanvas" class="canvas"></canvas>
+                        </div>
+                        <div class="controls">
+                            <button class="btn" onclick="trainPerceptron()">Train</button>
+                            <button class="btn" onclick="resetPerceptron()">Reset</button>
+                            <button class="btn" onclick="addRandomData()">Add Random Data</button>
+                        </div>
+                        <div class="stats">
+                            <div class="stat">
+                                <div class="stat-value" id="accuracy">0%</div>
+                                <div class="stat-label">Accuracy</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value" id="epochs">0</div>
+                                <div class="stat-label">Epochs</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value" id="dataPoints">0</div>
+                                <div class="stat-label">Data Points</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="demo-card">
+                        <h3>Neural Network Visualization</h3>
+                        <p>Watch signals propagate through a neural network in real-time</p>
+                        <div class="neural-network" id="neuralNetworkViz">
+                            <div class="layer">
+                                <div class="neuron" data-layer="0" data-neuron="0">x₁</div>
+                                <div class="neuron" data-layer="0" data-neuron="1">x₂</div>
+                                <div class="neuron" data-layer="0" data-neuron="2">x₃</div>
+                            </div>
+                            <div class="layer">
+                                <div class="neuron" data-layer="1" data-neuron="0">h₁</div>
+                                <div class="neuron" data-layer="1" data-neuron="1">h₂</div>
+                                <div class="neuron" data-layer="1" data-neuron="2">h₃</div>
+                                <div class="neuron" data-layer="1" data-neuron="3">h₄</div>
+                            </div>
+                            <div class="layer">
+                                <div class="neuron" data-layer="2" data-neuron="0">y</div>
+                            </div>
+                        </div>
+                        <div class="controls">
+                            <button class="btn" onclick="forwardPass()">Forward Pass</button>
+                            <button class="btn" onclick="backwardPass()">Backward Pass</button>
+                            <button class="btn" onclick="animateNetwork()">Animate</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="multilayer" class="tab-content">
+                <div class="demo-card">
+                    <h3>Multi-layer Network Training</h3>
+                    <p>Adjust network architecture and watch how it affects learning</p>
+                    <div class="controls">
+                        <label>Hidden Layers: <input type="range" class="slider" min="1" max="5" value="2" id="hiddenLayers"></label>
+                        <label>Neurons per Layer: <input type="range" class="slider" min="2" max="10" value="4" id="neuronsPerLayer"></label>
+                        <label>Learning Rate: <input type="range" class="slider" min="0.01" max="1" step="0.01" value="0.1" id="learningRate"></label>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="multilayerCanvas" class="canvas"></canvas>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="trainingProgress"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="activation" class="tab-content">
+                <div class="demo-card">
+                    <h3>Activation Functions</h3>
+                    <p>Compare different activation functions and their effects</p>
+                    <div class="controls">
+                        <button class="btn" onclick="showActivation('sigmoid')">Sigmoid</button>
+                        <button class="btn" onclick="showActivation('tanh')">Tanh</button>
+                        <button class="btn" onclick="showActivation('relu')">ReLU</button>
+                        <button class="btn" onclick="showActivation('leaky_relu')">Leaky ReLU</button>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="activationCanvas" class="canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="computer-vision" class="section">
+            <h2>👁️ Computer Vision</h2>
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <h3>Edge Detection</h3>
+                    <p>Upload an image or use the camera to see edge detection in action</p>
+                    <div class="canvas-container">
+                        <canvas id="edgeCanvas" class="canvas"></canvas>
+                    </div>
+                    <div class="controls">
+                        <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                        <button class="btn" onclick="document.getElementById('imageUpload').click()">Upload Image</button>
+                        <button class="btn" onclick="useCamera()">Use Camera</button>
+                        <button class="btn" onclick="applyEdgeDetection()">Detect Edges</button>
+                    </div>
+                </div>
+
+                <div class="demo-card">
+                    <h3>Feature Detection</h3>
+                    <p>Visualize how computer vision algorithms detect features in images</p>
+                    <div class="canvas-container">
+                        <canvas id="featureCanvas" class="canvas"></canvas>
+                    </div>
+                    <div class="controls">
+                        <button class="btn" onclick="detectCorners()">Corner Detection</button>
+                        <button class="btn" onclick="detectBlobs()">Blob Detection</button>
+                        <button class="btn" onclick="detectLines()">Line Detection</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="machine-learning" class="section">
+            <h2>🔬 Machine Learning Algorithms</h2>
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <h3>K-Means Clustering</h3>
+                    <p>Watch data points get clustered in real-time</p>
+                    <div class="canvas-container">
+                        <canvas id="kmeansCanvas" class="canvas"></canvas>
+                    </div>
+                    <div class="controls">
+                        <label>Clusters (k): <input type="range" class="slider" min="2" max="8" value="3" id="kValue"></label>
+                        <button class="btn" onclick="initKMeans()">Initialize</button>
+                        <button class="btn" onclick="stepKMeans()">Step</button>
+                        <button class="btn" onclick="runKMeans()">Run All</button>
+                    </div>
+                </div>
+
+                <div class="demo-card">
+                    <h3>Decision Trees</h3>
+                    <p>Build a decision tree interactively and see how it makes decisions</p>
+                    <div class="canvas-container">
+                        <canvas id="treeCanvas" class="canvas"></canvas>
+                    </div>
+                    <div class="controls">
+                        <button class="btn" onclick="buildTree()">Build Tree</button>
+                        <button class="btn" onclick="testPrediction()">Test Prediction</button>
+                        <button class="btn" onclick="showTreeStats()">Show Stats</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="ai-ethics" class="section">
+            <h2>⚖️ AI Ethics & Bias</h2>
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <h3>Bias Detection Demo</h3>
+                    <p>Explore how bias can affect AI decisions and learn to detect it</p>
+                    <div class="canvas-container">
+                        <canvas id="biasCanvas" class="canvas"></canvas>
+                    </div>
+                    <div class="controls">
+                        <button class="btn" onclick="simulateBias()">Simulate Bias</button>
+                        <button class="btn" onclick="correctBias()">Apply Correction</button>
+                        <button class="btn" onclick="compareFairness()">Compare Fairness</button>
+                    </div>
+                </div>
+
+                <div class="demo-card">
+                    <h3>Explainable AI</h3>
+                    <p>Understand how AI makes decisions with explainability tools</p>
+                    <div class="canvas-container">
+                        <canvas id="explainCanvas" class="canvas"></canvas>
+                    </div>
+                    <div class="controls">
+                        <button class="btn" onclick="showFeatureImportance()">Feature Importance</button>
+                        <button class="btn" onclick="showDecisionPath()">Decision Path</button>
+                        <button class="btn" onclick="showCounterfactuals()">What-If Analysis</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentModel = null;
+        let trainingData = [];
+        let animationId = null;
+        let cameraStream = null;
+
+        // Utility functions
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Perceptron implementation
+        class Perceptron {
+            constructor() {
+                this.weights = [Math.random() - 0.5, Math.random() - 0.5];
+                this.bias = Math.random() - 0.5;
+                this.learningRate = 0.1;
+            }
+
+            predict(inputs) {
+                let sum = this.bias;
+                for (let i = 0; i < inputs.length; i++) {
+                    sum += inputs[i] * this.weights[i];
+                }
+                return sum >= 0 ? 1 : -1;
+            }
+
+            train(inputs, target) {
+                let prediction = this.predict(inputs);
+                let error = target - prediction;
+                
+                this.bias += error * this.learningRate;
+                for (let i = 0; i < this.weights.length; i++) {
+                    this.weights[i] += error * inputs[i] * this.learningRate;
+                }
+            }
+        }
+
+        // Initialize perceptron
+        let perceptron = new Perceptron();
+        let perceptronData = [];
+        let epochs = 0;
+
+        function setupPerceptronCanvas() {
+            const canvas = document.getElementById('perceptronCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            canvas.addEventListener('click', function(e) {
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left - canvas.width/2) / (canvas.width/2);
+                const y = -(e.clientY - rect.top - canvas.height/2) / (canvas.height/2);
+                
+                // Determine class based on which side of a simple line
+                const target = x + y > 0 ? 1 : -1;
+                
+                perceptronData.push({ x, y, target });
+                updatePerceptronStats();
+                drawPerceptron();
+            });
+
+            drawPerceptron();
+        }
+
+        function drawPerceptron() {
+            const canvas = document.getElementById('perceptronCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 10; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * canvas.width / 10, 0);
+                ctx.lineTo(i * canvas.width / 10, canvas.height);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(0, i * canvas.height / 10);
+                ctx.lineTo(canvas.width, i * canvas.height / 10);
+                ctx.stroke();
+            }
+
+            // Draw decision boundary
+            if (perceptron.weights[1] !== 0) {
+                ctx.strokeStyle = '#00f5ff';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                
+                const x1 = -1;
+                const y1 = -(perceptron.weights[0] * x1 + perceptron.bias) / perceptron.weights[1];
+                const x2 = 1;
+                const y2 = -(perceptron.weights[0] * x2 + perceptron.bias) / perceptron.weights[1];
+                
+                ctx.moveTo((x1 + 1) * canvas.width / 2, (-y1 + 1) * canvas.height / 2);
+                ctx.lineTo((x2 + 1) * canvas.width / 2, (-y2 + 1) * canvas.height / 2);
+                ctx.stroke();
+            }
+
+            // Draw data points
+            perceptronData.forEach(point => {
+                const screenX = (point.x + 1) * canvas.width / 2;
+                const screenY = (-point.y + 1) * canvas.height / 2;
+                
+                ctx.beginPath();
+                ctx.arc(screenX, screenY, 8, 0, 2 * Math.PI);
+                ctx.fillStyle = point.target === 1 ? '#00ff00' : '#ff0000';
+                ctx.fill();
+                
+                // Show prediction
+                const prediction = perceptron.predict([point.x, point.y]);
+                ctx.strokeStyle = prediction === point.target ? '#ffffff' : '#ffff00';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+        }
+
+        function trainPerceptron() {
+            if (perceptronData.length === 0) return;
+            
+            let errors = 0;
+            perceptronData.forEach(point => {
+                const prediction = perceptron.predict([point.x, point.y]);
+                if (prediction !== point.target) {
+                    perceptron.train([point.x, point.y], point.target);
+                    errors++;
+                }
+            });
+            
+            epochs++;
+            updatePerceptronStats();
