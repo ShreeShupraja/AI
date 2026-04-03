@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: quantum-sentinel-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./apps/api/Dockerfile
+    autoDeploy: true
+
+  - type: web
+    name: quantum-sentinel-web
+    runtime: docker
+    plan: free
+    dockerfilePath: ./apps/web/Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://quantum-sentinel-api.onrender.com
